@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  #container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: lightgray;
+    font-family: Arial, sans-serif;
+  }
+  
+  #buttonContainer {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+  }
+  
+  a {
+    display: none;
+    text-decoration: none;
+    color: white;
+    background-color: #007bff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div id="welcome">
+    <h1>Velkommen til testen</h1>
+    <p>Denne test tager cirka 3-5 minutter og er helt anonym.</p>
+    <button id="acceptButton">Accepter og fortsæt</button>
+  </div>
+  <div id="message" style="display: none;">
+    <h1>Test</h1>
+    <p>Dette er ikke en konkurrence, men snarere en test for at se, hvor god din fornemmelse for tid er. Du må gerne tælle, men du må ikke kigge på nogen former for ure.</p>
+    <p>I testen skal du trykke på "Start" knappen og derefter vente et stykke tid. Formålet er at måle, hvor tæt du kan komme på 2 minutter uden at kigge på et ur.</p>
+    <p>Testen bør kun tages én gang for korrekte resultater.</p>
+    <button id="startButton" disabled>Fortsæt (3)</button>
+  </div>
+  <div id="buttonContainer" style="display: none;">
+    <button id="timeButton">Stop</button>
+    <p id="scoreDisplay"></p>
+    <p id="timeDisplay"></p>
+  </div>
+</div>
+
+<script>
+  const welcomeDiv = document.getElementById('welcome');
+  const startButton = document.getElementById('startButton');
+  const buttonContainer = document.getElementById('buttonContainer');
+  const timeButton = document.getElementById('timeButton');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const timeDisplay = document.getElementById('timeDisplay');
+  let startTime;
+  let counting = false;
+  let startCooldown = 3; // Start cooldown in seconds
+
+  startButton.addEventListener('click', () => {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    }
+    welcomeDiv.style.display = 'none';
+    document.getElementById('message').style.display = 'none';
+    buttonContainer.style.display = 'flex';
+    startTime = new Date().getTime();
+    counting = true;
+  });
+
+  timeButton.addEventListener('click', () => {
+    if (counting) {
+      counting = false;
+      const endTime = new Date().getTime();
+      const elapsedTime = (endTime - startTime) / 1000; // i sekunder
+      const score = Math.round(elapsedTime * 1000); // score i millisekunder
+      
+      const minutter = Math.floor(elapsedTime / 60);
+      const sekunder = Math.floor(elapsedTime % 60);
+
+      scoreDisplay.textContent = `Din score: ${score} point`;
+      timeDisplay.textContent = `Tid gået: ${minutter} minutter og ${sekunder} sekunder`;
+
+      timeButton.style.display = 'none';
+
+      const copyButton = document.createElement('button');
+      copyButton.textContent = 'Kopier score og send';
+      copyButton.style.marginTop = '20px';
+      copyButton.style.padding = '10px 20px';
+      copyButton.style.fontSize = '18px';
+      buttonContainer.appendChild(copyButton);
+
+      copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(scoreDisplay.textContent.match(/\d+/)[0])
+          .then(() => {
+            window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLScF_iCvLywao65e03-ss5ccRISr2zabSuomJfbJpW35h7VG2A/viewform?usp=sf_link';
+          })
+          .catch(error => {
+            console.error('Could not copy score:', error);
+          });
+      });
+    }
+  });
+
+  timeButton.addEventListener('click', () => {
+    timeButton.style.display = 'none';
+    copyButton.style.display = 'block';
+  });
+
+  const acceptButton = document.getElementById('acceptButton');
+  acceptButton.addEventListener('click', () => {
+    welcomeDiv.style.display = 'none';
+    startButton.style.display = 'block';
+    startButton.textContent = `Fortsæt (${startCooldown})`;
+    startButton.setAttribute('disabled', 'true');
+    let cooldownInterval = setInterval(() => {
+      startCooldown--;
+      startButton.textContent = `Fortsæt (${startCooldown})`;
+      if (startCooldown === 0) {
+        clearInterval(cooldownInterval);
+        startButton.textContent = 'Fortsæt';
+        startButton.removeAttribute('disabled');
+      }
+    }, 1000); // Update every second
+    document.getElementById('message').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
