@@ -29,17 +29,6 @@
     padding: 10px 20px;
     font-size: 18px;
   }
-  
-  a {
-    display: none;
-    text-decoration: none;
-    color: white;
-    background-color: #007bff;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
 </style>
 </head>
 <body>
@@ -62,6 +51,9 @@
     <p id="scoreDisplay"></p>
     <p id="timeDisplay"></p>
   </div>
+  <div id="fullscreenButton" style="display: none;">
+    <button id="backToFullscreenButton">Gå tilbage i fuld skærm</button>
+  </div>
 </div>
 
 <script>
@@ -71,6 +63,8 @@
   const timeButton = document.getElementById('timeButton');
   const scoreDisplay = document.getElementById('scoreDisplay');
   const timeDisplay = document.getElementById('timeDisplay');
+  const fullscreenButton = document.getElementById('fullscreenButton');
+  const backToFullscreenButton = document.getElementById('backToFullscreenButton');
   let startTime;
   let counting = false;
   let startCooldown = 5; // Start cooldown in seconds
@@ -120,9 +114,24 @@
     }
   });
 
-  timeButton.addEventListener('click', () => {
-    timeButton.style.display = 'none';
-    copyButton.style.display = 'block';
+  backToFullscreenButton.addEventListener('click', () => {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+      fullscreenButton.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      fullscreenButton.style.display = 'none';
+      buttonContainer.style.display = 'flex'; // Show the button container again when returning to fullscreen
+      startTime = new Date().getTime(); // Restart the timer when returning to fullscreen
+      counting = true; // Resume counting
+    } else {
+      fullscreenButton.style.display = 'block';
+      buttonContainer.style.display = 'none'; // Hide the button container when not in fullscreen
+      counting = false; // Pause counting
+    }
   });
 
   const acceptButton = document.getElementById('acceptButton');
