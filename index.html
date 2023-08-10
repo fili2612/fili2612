@@ -47,18 +47,18 @@
 <div id="container">
   <div id="welcome">
     <h1>Velkommen til testen</h1>
-    <p>Denne test tager cirka 3-5 minutter og er helt anonym.</p>
+    <p>Denne test tager cirka 5-7 minutter og er helt anonym.</p>
     <button id="acceptButton">Accepter og fortsæt</button>
   </div>
   <div id="message" style="display: none;">
-    <h1>Test</h1>
+    <h1>Hvor god er din tidsfornæmmelse?</h1>
     <p>Dette er ikke en konkurrence, men snarere en test for at se, hvor god din fornemmelse for tid er. Du må gerne tælle, men du må ikke kigge på nogen former for ure.</p>
     <p>I testen skal du trykke på "Start" knappen og derefter vente et stykke tid. Formålet er at måle, hvor tæt du kan komme på 2 minutter uden at kigge på et ur.</p>
     <p>Testen bør kun tages én gang for korrekte resultater.</p>
-    <button id="startButton" disabled>Fortsæt (3)</button>
+    <button id="startButton" disabled>Fortsæt (5)</button>
   </div>
   <div id="buttonContainer" style="display: none;">
-    <button id="timeButton">Stop</button>
+    <button id="timeButton">Klik her når du tror 2 minutter er gået</button>
     <p id="scoreDisplay"></p>
     <p id="timeDisplay"></p>
   </div>
@@ -73,7 +73,7 @@
   const timeDisplay = document.getElementById('timeDisplay');
   let startTime;
   let counting = false;
-  let startCooldown = 3; // Start cooldown in seconds
+  let startCooldown = 5; // Start cooldown in seconds
 
   startButton.addEventListener('click', () => {
     if (document.documentElement.requestFullscreen) {
@@ -102,7 +102,7 @@
       timeButton.style.display = 'none';
 
       const copyButton = document.createElement('button');
-      copyButton.textContent = 'Kopier score og send';
+      copyButton.textContent = 'Fortsæt';
       copyButton.style.marginTop = '20px';
       copyButton.style.padding = '10px 20px';
       copyButton.style.fontSize = '18px';
