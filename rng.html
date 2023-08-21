@@ -28,7 +28,7 @@
         }
     </style>
     <script>
-        var excludedNumbers = [6, 19];
+        var undtagneNumre = [];
 
         function genererTilfældigtNummer() {
             var fra = parseInt(document.getElementById('fra').value);
@@ -43,10 +43,17 @@
 
                 do {
                     tilfældigtNummer = Math.floor(Math.random() * (til - fra + 1)) + fra;
-                } while (excludedNumbers.includes(tilfældigtNummer));
+                } while (undtagneNumre.includes(tilfældigtNummer));
 
-                document.getElementById('resultat').innerHTML = "Tilfældigt Nummer: " + tilfældigtNummer;
+                document.getElementById('resultat').innerHTML = "Tilfældigt Nummer: " + tilfældigtNummer +
+                    "<br><button onclick='tilføjTilUndtagelser(" + tilfældigtNummer + ")'>Ekskluder dette nummer</button>";
             }
+        }
+
+        function tilføjTilUndtagelser(nummer) {
+            undtagneNumre.push(nummer);
+            document.getElementById('undtagelser').value = undtagneNumre.join(',');
+            genererTilfældigtNummer(); // Generér et nyt tilfældigt nummer
         }
     </script>
 </head>
@@ -57,6 +64,9 @@
     <br>
     <label for="til">Til:</label>
     <input type="number" id="til" min="0">
+    <br>
+    <label for="undtagelser">Undtagelser (kommasepareret):</label>
+    <input type="text" id="undtagelser">
     <br>
     <button onclick="genererTilfældigtNummer()">Generér Tilfældigt Nummer</button>
     <div id="resultat"></div>
