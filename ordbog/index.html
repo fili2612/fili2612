@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quarters Website</title>
+    <style>
+        /* Style the iframes to take up a quarter of the screen */
+        iframe {
+            width: 50%;
+            height: 50vh; /* 50% of the viewport height */
+            border: none;
+        }
+        
+        /* Arrange iframes in a 2x2 grid */
+        .iframe-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            height: 100vh; /* 100% of the viewport height */
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <iframe src="https://cors-anywhere.herokuapp.com/https://ordnet.dk/ddo" 
+                headers="Origin: https://fili2612.github.io"></iframe>
+        <iframe src="https://cors-anywhere.herokuapp.com/https://ordnet.dk/ddo" 
+                headers="Origin: https://fili2612.github.io"></iframe>
+        <iframe src="https://cors-anywhere.herokuapp.com/https://ordnet.dk/ddo" 
+                headers="Origin: https://fili2612.github.io"></iframe>
+        <iframe src="https://cors-anywhere.herokuapp.com/https://ordnet.dk/ddo" 
+                headers="Origin: https://fili2612.github.io"></iframe>
+    </div>
+</body>
+</html>
