@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Tracker</title>
+</head>
+<body>
+    <h1>Link Tracker</h1>
+
+    <!-- Form to input and save links -->
+    <form id="linkForm">
+        <label for="link">Tilføj link:</label>
+        <input type="text" id="link" placeholder="https://example.com" required>
+        <button type="submit">Gem link</button>
+    </form>
+
+    <!-- Display saved links -->
+    <div id="linkList">
+        <h2>Gemte   :</h2>
+        <ul id="savedLinks">
+            <!-- Saved links will be displayed here -->
+        </ul>
+    </div>
+
+    <script>
+        // Function to handle form submission
+        function saveLink(event) {
+            event.preventDefault();
+
+            // Get the input value
+            const linkInput = document.getElementById('link');
+            const link = linkInput.value;
+
+            // Check if the link is valid (you can add more robust validation)
+            if (link && link.trim() !== '') {
+                // Save the link with a timestamp to localStorage
+                const savedLinks = JSON.parse(localStorage.getItem('savedLinks')) || [];
+                const timestamp = new Date().toLocaleString(); // Get the current timestamp
+                savedLinks.push({ link, timestamp });
+                localStorage.setItem('savedLinks', JSON.stringify(savedLinks));
+
+                // Clear the input field
+                linkInput.value = '';
+
+                // Update the list of saved links
+                displaySavedLinks();
+            }
+        }
+
+        // Function to display saved links
+        function displaySavedLinks() {
+            const savedLinks = JSON.parse(localStorage.getItem('savedLinks')) || [];
+            const savedLinksList = document.getElementById('savedLinks');
+
+            // Clear the existing list
+            savedLinksList.innerHTML = '';
+
+            // Display each saved link with its timestamp and a delete button
+            savedLinks.forEach((savedLink, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <a href="${savedLink.link}" target="_blank">${savedLink.link}</a>
+                    (Tilføjet: ${savedLink.timestamp})
+                    <button onclick="deleteLink(${index})">Slet</button>
+                `;
+
+                savedLinksList.appendChild(listItem);
+            });
+        }
+
+        // Function to delete a saved link
+        function deleteLink(index) {
+            const savedLinks = JSON.parse(localStorage.getItem('savedLinks')) || [];
+
+            // Remove the link at the specified index
+            savedLinks.splice(index, 1);
+
+            // Update the localStorage
+            localStorage.setItem('savedLinks', JSON.stringify(savedLinks));
+
+            // Update the list of saved links
+            displaySavedLinks();
+        }
+
+        // Initialize the app by displaying saved links
+        displaySavedLinks();
+
+        // Add form submission event listener
+        const linkForm = document.getElementById('linkForm');
+        linkForm.addEventListener('submit', saveLink);
+    </script>
+</body>
+</html>
