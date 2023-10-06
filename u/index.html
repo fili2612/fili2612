@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal hopping Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons" />
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .product-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .cart-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .cart-item {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-item img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 20px;
+            transition: transform 0.3s ease; /* Add transition effect */
+        }
+
+        .cart-item:hover img {
+            transform: scale(2); /* Double the size on hover */
+            transition-delay: 1s; /* Delay the transition by 1 second */
+        }
+
+        .product-details {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-weight: bold;
+            color: #000;
+            margin-left: 10px;
+        }
+
+        .product-price {
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .delete-button {
+            cursor: pointer;
+            color: red;
+            margin-left: 10px;
+            visibility: hidden;
+        }
+
+        .cart-item:hover .delete-button {
+            visibility: visible;
+        }
+
+        .cart-total {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="center-align">Universal shopping cart</h1>
+        <div class="row">
+            <div class="col s12 m6 offset-m3">
+                <div class="product-form">
+                    <form id="product-form">
+                        <div class="input-field">
+                            <input type="url" id="product-url" required>
+                            <label for="product-url">Product URL</label>
+                        </div>
+                        <div class="input-field">
+                            <input type="url" id="product-image" required>
+                            <label for="product-image">Product Image URL</label>
+                        </div>
+                        <div class="input-field">
+                            <input type="text" id="product-name" required>
+                            <label for="product-name">Product Name</label>
+                        </div>
+                        <div class="input-field">
+                            <input type="number" id="product-price-dkk" step="0.01" required>
+                            <label for="product-price-dkk">Product Price (DKK)</label>
+                        </div>
+                        <div class="center-align">
+                            <button class="btn waves-effect waves-light green" type="submit" id="add-product">
+                                Add to Cart
+                                <i class="material-icons right">add_shopping_cart</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <h2>Your Shopping Cart</h2>
+        <ul class="cart-list" id="cart-list"></ul>
+        <p class="cart-total">Total (DKK): <span id="cart-total-dkk">0.00</span> DKK | Total (USD): $<span id="cart-total-usd">0.00</span></p>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const productForm = document.getElementById("product-form");
+            const cartList = document.getElementById("cart-list");
+            const cartTotalDKK = document.getElementById("cart-total-dkk");
+            const cartTotalUSD = document.getElementById("cart-total-usd");
+            const conversionRate = 6.27; // USD to DKK conversion rate
+
+            // Load the cart from local storage if it exists
+            const savedCart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+            let currentTotalDKK = 0;
+
+            // Function to update and save the cart to local storage
+            function updateAndSaveCart() {
+                // Clear the existing cart
+                cartList.innerHTML = "";
+
+                savedCart.forEach((product) => {
+                    const { url, imageUrl, name, priceDKK, priceUSD } = product;
+
+                    const listItem = document.createElement("li");
+                    listItem.classList.add("cart-item");
+                    listItem.innerHTML = `
+                        <a href="${url}" target="_blank" class="cart-item-link">
+                            <div class="product-details">
+                                <a href="${url}" target="_blank">
+                                    <img src="${imageUrl}" alt="${name}">
+                                </a>
+                                <a href="${url}" target="_blank" class="product-name">${name}</a>
+                                <span class="product-price">${priceDKK} DKK | $${priceUSD}</span>
+                                <i class="material-icons delete-button" title="Remove">delete</i>
+                            </div>
+                        </a>
+                    `;
+
+                    // Attach a click event listener to the delete button
+                    const deleteButton = listItem.querySelector(".delete-button");
+                    deleteButton.addEventListener("click", function () {
+                        // Find the index of the product in the saved cart
+                        const index = savedCart.findIndex((p) => p.url === url);
+                        if (index !== -1) {
+                            // Remove the product from the saved cart
+                            savedCart.splice(index, 1);
+                            // Update local storage and re-render the cart
+                            localStorage.setItem("shoppingCart", JSON.stringify(savedCart));
+                            updateAndSaveCart();
+                        }
+                    });
+
+                    cartList.appendChild(listItem);
+
+                    // Update the total in DKK
+                    currentTotalDKK += priceDKK;
+                });
+
+                // Update the total in both DKK and USD
+                const currentTotalUSD = currentTotalDKK / conversionRate;
+                cartTotalDKK.innerText = currentTotalDKK.toFixed(2);
+                cartTotalUSD.innerText = currentTotalUSD.toFixed(2);
+            }
+
+            // Initialize the cart display
+            updateAndSaveCart();
+
+            productForm.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const productUrl = document.getElementById("product-url").value;
+                const productImageURL = document.getElementById("product-image").value;
+                const productName = document.getElementById("product-name").value;
+                const productPriceDKK = parseFloat(document.getElementById("product-price-dkk").value);
+                const productPriceUSD = (productPriceDKK / conversionRate).toFixed(2);
+
+                // Add the product to the saved cart
+                savedCart.push({
+                    url: productUrl,
+                    imageUrl: productImageURL,
+                    name: productName,
+                    priceDKK: productPriceDKK,
+                    priceUSD: productPriceUSD,
+                });
+
+                // Update local storage with the updated cart
+                localStorage.setItem("shoppingCart", JSON.stringify(savedCart));
+
+                // Clear the form and re-render the cart
+                productForm.reset();
+                updateAndSaveCart();
+            });
+
+            // Initialize Materialize components
+            M.AutoInit();
+        });
+    </script>
+</body>
+</html>
