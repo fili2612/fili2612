@@ -95,12 +95,17 @@
 <body>
 
 <div id="container">
+  <div id="welcome">
+    <h1>Velkommen til testen</h1>
+    <p>Denne test er helt anonym og er bare for sjov. </p>
+    <button id="acceptButton">Accepter og fortsæt</button>
+  </div>
   <div id="message" style="display: none;">
     <h1>Hvor god er din tidsfornemmelse?</h1>
     <h2>Læs venligst!</h2>
     <p>Dette er en konkurrence, en test for at se, hvor god din fornemmelse for tid er. Du må gerne tælle, men du må ikke kigge på nogen former for ure.</p>
     <p>I testen skal du trykke på "Start" knappen og derefter vente et stykke tid. Formålet er at måle, hvor tæt du kan komme på 2 minutter uden at kigge på et ur.</p>
-    <button id="startButton">Fortsæt</button>
+    <button id="startButton" disabled>Fortsæt (5)</button>
   </div>
   <div id="buttonContainer" style="display: none;">
     <button id="timeButton">Klik her når du tror 2 minutter er gået</button>
@@ -114,6 +119,7 @@
 </div>
 
 <script>
+  const welcomeDiv = document.getElementById('welcome');
   const startButton = document.getElementById('startButton');
   const buttonContainer = document.getElementById('buttonContainer');
   const timeButton = document.getElementById('timeButton');
@@ -123,7 +129,7 @@
   const backToFullscreenButton = document.getElementById('backToFullscreenButton');
   let startTime;
   let counting = false;
-  let startCooldown = 5; // Start cooldown in seconds
+  let startCooldown = 0; // Start cooldown in seconds
 
   startButton.addEventListener('click', () => {
     if (document.documentElement.requestFullscreen) {
