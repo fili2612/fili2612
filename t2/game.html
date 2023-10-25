@@ -114,7 +114,6 @@
 </div>
 
 <script>
-  const welcomeDiv = document.getElementById('welcome');
   const startButton = document.getElementById('startButton');
   const buttonContainer = document.getElementById('buttonContainer');
   const timeButton = document.getElementById('timeButton');
@@ -162,7 +161,7 @@
       copyButton.addEventListener('click', () => {
         navigator.clipboard.writeText(scoreDisplay.textContent.match(/\d+/)[0])
           .then(() => {
-            window.location.href = 'https:fili2612.github.io/t2/game';
+            window.location.href = 'https://fili2612.github.io/t2/game';
           })
           .catch(error => {
             console.error('Could not copy score:', error);
