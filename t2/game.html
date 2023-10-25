@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  #container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: lightgray;
+    font-family: Arial, sans-serif;
+  }
+  
+  #buttonContainer {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+  }
+  #loader {
+  width: 80px;
+  height: 40px;
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  margin: -20px -40px;
+  z-index: 1000;
+}
+
+.box{
+  background-color: #006699;
+  margin: 0 auto;
+  width: 500px;
+  height: 300px;
+  position: relative;
+  box-shadow: inset 0 0 20px #155;
+  border-radius: 20px;
+  border: 1px solid #111;
+  overflow: hidden;
+}
+
+.box b {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #999999;
+  box-shadow: inset -5px -5px 5px rgba(0,0,0,.6), 15px 15px 2px rgba(0,0,0,.04);
+  position: absolute;
+  -webkit-animation: moveX 2s linear 0s infinite alternate, moveY 3.4s linear 0s infinite alternate;
+  -moz-animation: moveX 2s linear 0s infinite alternate, moveY 3.4s linear 0s infinite alternate;
+  -o-animation: moveX 2s linear 0s infinite alternate, moveY 3.4s linear 0s infinite alternate;
+  animation: moveX 2s linear 0s infinite alternate, moveY 3.4s linear 0s infinite alternate;
+}
+
+@-webkit-keyframes moveX {
+  from { left: 0; } to { left: 480px; }
+}
+@-moz-keyframes moveX {
+  from { left: 0; } to { left: 480px; }
+}
+@-o-keyframes moveX {
+  from { left: 0; } to { left: 480px; }
+}
+@keyframes moveX {
+  from { left: 0; } to { left: 480px; }
+}
+
+@-webkit-keyframes moveY {
+  from { top: 0; } to { top: 280px; }
+}
+@-moz-keyframes moveY {
+  from { top: 0; } to { top: 280px; }
+}
+@-o-keyframes moveY {
+  from { top: 0; } to { top: 280px; }
+}
+@keyframes moveY {
+  from { top: 0; } to { top: 280px; }
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div id="welcome">
+    <h1>Velkommen til testen</h1>
+    <p>Denne test tager cirka 5-7 minutter og er helt anonym.</p>
+    <button id="acceptButton">Accepter og fortsæt</button>
+  </div>
+  <div id="message" style="display: none;">
+    <h1>Hvor god er din tidsfornemmelse?</h1>
+    <h2>Læs venligst!</h2>
+    <p>Dette er en konkurrence, en test for at se, hvor god din fornemmelse for tid er. Du må gerne tælle, men du må ikke kigge på nogen former for ure.</p>
+    <p>I testen skal du trykke på "Start" knappen og derefter vente et stykke tid. Formålet er at måle, hvor tæt du kan komme på 2 minutter uden at kigge på et ur.</p>
+    <button id="startButton" disabled>Fortsæt (5)</button>
+  </div>
+  <div id="buttonContainer" style="display: none;">
+    <button id="timeButton">Klik her når du tror 2 minutter er gået</button>
+    <p id="scoreDisplay"></p>
+    <p id="timeDisplay"></p>
+    <div class="box"><b></b></div>
+  </div>
+  <div id="fullscreenButton" style="display: none;">
+    <button id="backToFullscreenButton">Gå tilbage i fuld skærm og start forfra</button>
+  </div>
+</div>
+
+<script>
+  const welcomeDiv = document.getElementById('welcome');
+  const startButton = document.getElementById('startButton');
+  const buttonContainer = document.getElementById('buttonContainer');
+  const timeButton = document.getElementById('timeButton');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const fullscreenButton = document.getElementById('fullscreenButton');
+  const backToFullscreenButton = document.getElementById('backToFullscreenButton');
+  let startTime;
+  let counting = false;
+  let startCooldown = 5; // Start cooldown in seconds
+
+  startButton.addEventListener('click', () => {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    }
+    welcomeDiv.style.display = 'none';
+    document.getElementById('message').style.display = 'none';
+    buttonContainer.style.display = 'flex';
+    startTime = new Date().getTime();
+    counting = true;
+  });
+
+  timeButton.addEventListener('click', () => {
+    if (counting) {
+      counting = false;
+      const endTime = new Date().getTime();
+      const elapsedTime = (endTime - startTime) / 1000; // i sekunder
+      const score = Math.round(elapsedTime * 1000); // score i millisekunder
+      
+      const minutter = Math.floor(elapsedTime / 60);
+      const sekunder = Math.floor(elapsedTime % 60);
+
+      scoreDisplay.textContent = `Din score: ${score} point`;
+      timeDisplay.textContent = `Tid gået: ${minutter} minutter og ${sekunder} sekunder`;
+
+      timeButton.style.display = 'none';
+
+      const copyButton = document.createElement('button');
+      copyButton.textContent = 'Gentag';
+      copyButton.style.marginTop = '20px';
+      copyButton.style.padding = '10px 20px';
+      copyButton.style.fontSize = '18px';
+      buttonContainer.appendChild(copyButton);
+
+      copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(scoreDisplay.textContent.match(/\d+/)[0])
+          .then(() => {
+            window.location.href = 'https:fili2612.github.io/t2/game';
+          })
+          .catch(error => {
+            console.error('Could not copy score:', error);
+          });
+      });
+    }
+  });
+
+  backToFullscreenButton.addEventListener('click', () => {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+      fullscreenButton.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      fullscreenButton.style.display = 'none';
+      buttonContainer.style.display = 'flex'; // Show the button container again when returning to fullscreen
+      startTime = new Date().getTime(); // Restart the timer when returning to fullscreen
+      counting = true; // Resume counting
+    } else {
+      fullscreenButton.style.display = 'block';
+      buttonContainer.style.display = 'none'; // Hide the button container when not in fullscreen
+      counting = false; // Pause counting
+    }
+  });
+
+  const acceptButton = document.getElementById('acceptButton');
+  acceptButton.addEventListener('click', () => {
+    welcomeDiv.style.display = 'none';
+    startButton.style.display = 'block';
+    startButton.textContent = `Fortsæt (${startCooldown})`;
+    startButton.setAttribute('disabled', 'true');
+    let cooldownInterval = setInterval(() => {
+      startCooldown--;
+      startButton.textContent = `Fortsæt (${startCooldown})`;
+      if (startCooldown === 0) {
+        clearInterval(cooldownInterval);
+        startButton.textContent = 'Fortsæt';
+        startButton.removeAttribute('disabled');
+      }
+    }, 1000); // Update every second
+    document.getElementById('message').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
