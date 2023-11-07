@@ -133,6 +133,52 @@
   let counting = false;
   let startCooldown = 5; // Start cooldown in seconds
 
+  // Function to check if the test has already been taken
+  function checkIfTestTaken() {
+    if (localStorage.getItem('testTaken')) {
+      const popup = document.createElement('div');
+      popup.style.position = 'absolute';
+      popup.style.top = '0';
+      popup.style.left = '0';
+      popup.style.width = '100%';
+      popup.style.height = '100%';
+      popup.style.display = 'flex';
+      popup.style.justifyContent = 'center';
+      popup.style.alignItems = 'center';
+      popup.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+      popup.style.zIndex = '999';
+      
+      const popupContent = document.createElement('div');
+      popupContent.style.backgroundColor = 'white';
+      popupContent.style.padding = '20px';
+      popupContent.style.borderRadius = '10px';
+      
+      const popupText = document.createElement('p');
+      popupText.textContent = 'Du har allerede gennemført testen!';
+      popupText.style.fontSize = '24px';
+      popupText.style.marginBottom = '20px';
+      
+      const closeButton = document.createElement('button');
+      closeButton.textContent = 'Luk';
+      closeButton.style.marginRight = '10px';
+      closeButton.addEventListener('click', () => {
+        window.close(); // Close the tab
+      });
+      
+      const gameButton = document.createElement('a');
+      gameButton.textContent = 'Gå til spil-versionen';
+      gameButton.href = 'https://fili2612.github.io/t2/game';
+      
+      popupContent.appendChild(popupText);
+      popupContent.appendChild(closeButton);
+      popupContent.appendChild(gameButton);
+      popup.appendChild(popupContent);
+      document.body.appendChild(popup);
+    }
+  }
+  
+  checkIfTestTaken(); // Call the function to check if the test is taken
+  
   startButton.addEventListener('click', () => {
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen();
@@ -169,6 +215,7 @@
       copyButton.addEventListener('click', () => {
         navigator.clipboard.writeText(scoreDisplay.textContent.match(/\d+/)[0])
           .then(() => {
+            localStorage.setItem('testTaken', true); // Set the flag that the test has been taken
             window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSex8vJJN_fgyKh-7ojGymqrLAmkGNrY1haf85aSefd4JmC4Qw/viewform?usp=sf_link';
           })
           .catch(error => {
