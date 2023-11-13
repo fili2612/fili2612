@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        body {
+            background-color: #1f1f1f; /* Dark background color */
+            color: #ffffff; /* Light text color */
+        }
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .input-field label {
+            color: #ffffff; /* Light label color */
+        }
+        .input-field input {
+            border-bottom: 1px solid #ffffff; /* Light bottom border color */
+            color: #ffffff; /* Light text color */
+        }
+        .input-field input:focus + label {
+            color: #ffffff !important; /* Light focused label color */
+        }
+        .input-field input:focus {
+            border-bottom: 1px solid #ffffff !important; /* Light focused bottom border color */
+            box-shadow: 0 1px 0 0 #ffffff !important; /* Light focused box-shadow */
+        }
+        .input-field .prefix.active {
+            color: #ffffff; /* Light prefix color */
+        }
+        .btn {
+            background-color: #4285f4; /* Google Blue */
+        }
+    </style>
+</head>
+<body>
+
+<div class="center-container">
+    <div id="inputSection" class="input-field">
+        <input type="text" id="videoUrl" class="validate" placeholder="Insert YouTube link here">
+        <label for="videoUrl"></label>
+        <button class="btn waves-effect waves-light" onclick="loadVideo()">Load Video</button>
+    </div>
+
+    <div id="videoSection" class="hide">
+        <div id="videoPlayer"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+    // Function to extract the video ID from the YouTube URL or URL parameters
+    function getVideoId(url) {
+        const match = url.match(/[?&]v=([^&]+)/);
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramVideoId = urlParams.get('v');
+        return (match && match[1]) || paramVideoId || '';
+    }
+
+    // Function to load the YouTube video
+    function loadVideo() {
+        const inputSection = document.getElementById('inputSection');
+        const videoSection = document.getElementById('videoSection');
+        const videoUrlInput = document.getElementById('videoUrl');
+        const videoPlayerDiv = document.getElementById('videoPlayer');
+
+        const videoUrl = videoUrlInput.value;
+
+        try {
+            // Extract the video ID from the YouTube URL or URL parameters
+            const videoId = getVideoId(videoUrl);
+
+            if (!videoId) {
+                throw new Error('Invalid YouTube link');
+            }
+
+            // Update the URL with the video ID
+            const newUrl = window.location.href.split('?')[0] + `?v=${videoId}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
+            // Create a new YouTube IFrame Player
+            const player = new YT.Player('videoPlayer', {
+                height: '100%',
+                width: '100%',
+                videoId: videoId,
+                events: {
+                    'onReady': function () {
+                        // Show videoSection and hide inputSection
+                        inputSection.classList.add('hide');
+                        videoSection.classList.remove('hide');
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error loading video:', error);
+            // You can add an error message if needed
+        }
+    }
+
+    // Check if there's a video ID in the URL parameters and load the video
+    window.onload = function() {
+        const videoId = getVideoId(window.location.href);
+        if (videoId) {
+            loadVideo();
+        }
+    };
+</script>
+
+<!-- Include the YouTube IFrame Player API script -->
+<script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>
