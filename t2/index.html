@@ -106,7 +106,6 @@
     <p>Dette er ikke en konkurrence, men snarere en test for at se, hvor god din fornemmelse for tid er. Du må gerne tælle, men du må ikke kigge på nogen former for ure.</p>
     <p>I testen skal du trykke på "Start" knappen og derefter vente et stykke tid. Formålet er at måle, hvor tæt du kan komme på 2 minutter uden at kigge på et ur.</p>
     <p>Testen bør kun tages én gang for korrekte resultater.</p>
-    <a href="https://fili2612.github.io/t2/game"><p>Tryk her for at gå til spil-versionen af dette</p></a>
     <button id="startButton" disabled>Fortsæt (5)</button>
   </div>
   <div id="buttonContainer" style="display: none;">
@@ -135,7 +134,7 @@
 
   // Function to check if the test has already been taken
   function checkIfTestTaken() {
-    if (localStorage.getItem('testTaken')) {
+    if (localStorage.getItem('testTakendjf')) {
       const popup = document.createElement('div');
       popup.style.position = 'absolute';
       popup.style.top = '0';
