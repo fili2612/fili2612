@@ -217,7 +217,7 @@
       copyButton.addEventListener('click', () => {
         navigator.clipboard.writeText(scoreDisplay.textContent.match(/\d+/)[0])
           .then(() => {
-            window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSex8vJJN_fgyKh-7ojGymqrLAmkGNrY1haf85aSefd4JmC4Qw/viewform?usp=sf_link';
+            window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSdLy1CSAXWWq_9eqvgqMYwjdPYfQJNYGVmcugr04kcwStAyMg/viewform?usp=sf_link';
           })
           .catch(error => {
             console.error('Could not copy score:', error);
