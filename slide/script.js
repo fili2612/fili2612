@@ -23,7 +23,9 @@ let slideData = [
     { slide: 19, speaker: 'B' },
     { slide: 20, speaker: 'B' },
     { slide: 21, speaker: 'F' },
-    { slide: 22, speaker: 'F' }
+    { slide: 22, speaker: 'F' },
+    { slide: 23, speaker: 'B' },
+    { slide: 24, speaker: 'F' },
 ];
 
 const displayTimer = () => {
